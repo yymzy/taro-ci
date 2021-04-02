@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "module": "ES2015",
+    "target": "es5",
+    "lib": [
+      "ESNext"
+    ],
+    "strict": false,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationDir": "dist",
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "outDir": "dist/lib",
+    "baseUrl": ".",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "paths": {
+      "core": [
+        "src/core/index.ts"
+      ],
+      "core/*": [
+        "src/core/*"
+      ],
+      "command": [
+        "src/core/command/index.ts"
+      ],
+      "command/*": [
+        "src/core/command/*"
+      ],
+      "utils": [
+        "src/utils/index.ts"
+      ],
+      "types": [
+        "src/types/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "src"
+  ]
+}
