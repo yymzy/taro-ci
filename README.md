@@ -1,2 +1,2 @@
 # miniprogram-ci-trigger
-小程序自动上传触发器
+小程序自动上传触发器1
