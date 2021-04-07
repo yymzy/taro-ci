@@ -1,10 +1,10 @@
 {
-  "name": "miniprogram-ci-trigger",
+  "name": "taro-ci",
   "version": "1.0.0",
-  "main": "dist/mini-ci.js",
+  "main": "dist/taro-ci.js",
   "types": "dist/lib/types/index.d.ts",
   "bin": {
-    "mini-ci": "bin/mini-ci.js"
+    "taro-ci": "bin/taro-ci.js"
   },
   "files": [
     "bin",

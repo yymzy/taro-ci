@@ -16,7 +16,7 @@ import { get } from "utils";
 const args = minimist(process.argv.slice(2));
 const command = args._[0];
 const _version = chalk.yellow(
-  `🥁 mini-ci v${require("../package.json").version}`
+  `taro-ci v${require("../package.json").version}`
 );
 
 function init() {
