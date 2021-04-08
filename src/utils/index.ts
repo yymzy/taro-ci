@@ -52,8 +52,6 @@ function consoleBufferByTheme(data: ArrayBuffer): string {
  */
 export function commandTrigger(commandStr: string, env: EnvCustom): Promise<CommandPromiseRes> {
   return new Promise((resolve) => {
-    let stderrInfo = "";
-
     const [command, ...arg] = commandStr.split(/\s/g);
 
     const subprocess = spawn(command, arg, {
@@ -68,12 +66,8 @@ export function commandTrigger(commandStr: string, env: EnvCustom): Promise<Comm
     subprocess.stdout.on('data', consoleBufferByTheme);
 
     subprocess.stderr.on('data', data => {
-      stderrInfo = consoleBufferByTheme(data);
-    });
-
-    subprocess.on('exit', function (code) {
-      console.log('exit')
-      resolve({ code, err: stderrInfo });
+      consoleBufferByTheme(data);
+      resolve({ code: 0 });
     });
 
     subprocess.on('error', (err) => {

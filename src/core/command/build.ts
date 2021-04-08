@@ -16,7 +16,6 @@ async function build(isWatch: Boolean) {
     } catch (error) {
       console.log("err", error);
     }
-
   }
 }
 
