@@ -1,45 +1,24 @@
-import ora from "ora";
-import chalk from "chalk";
-import { packNpm as miniBuild } from "miniprogram-ci";
-import { Config } from "./config";
-import createProject from "../project";
+import { commandTrigger } from "utils";
 
-function build(confIns: Config) {
-  const { build, project } = confIns.config;
-  const miniProject = createProject(project);
-  const spinner = ora().start(chalk.yellow(`项目构建中... \n`));
-  let code;
-  miniBuild(miniProject, {
-    ...build,
-    reporter: function (...args) {
-      console.log(`构建信息:`, ...args, "\n");
-    },
-  })
-    .then(() => {
-      code = 0;
-      spinner.succeed(chalk.yellow(`项目构建成功!`));
-    })
-    .catch((err) => {
-      code = 1;
-      spinner.fail(chalk.red(`项目构建失败:${err} \n`));
-    })
-    .finally(() => {
-      process.exit(code);
-    });
+async function build(isWatch: Boolean) {
+  const list = ["weapp", "weapp-third"];
+  for (let item of list) {
+    try {
+      const [type, ...modes] = item.split("-");
+      let commandStr = `Taro build --type ${type}`;
+      if (isWatch) {
+        // 开发模式，开启监听
+        commandStr = `${commandStr} --watch`;
+      }
+      await commandTrigger(commandStr, {
+        MODE_ENV: modes.join("-").toLocaleUpperCase()
+      });
+    } catch (error) {
+      console.log("err", error);
+    }
+
+  }
 }
 
-export function logHelp() {
-  console.log(`
-  Usage: mini-ci upload  [--options]
-
-  Options:
-    --help, -h                                显示帮助文档.
-    --version, -v                             显示mini-ci版本.
-    --igno                                    构建npm忽略的规则
-    
-  Preset:
-    --name                       项目名称(全局配置)
-  `);
-}
 
 export default build;

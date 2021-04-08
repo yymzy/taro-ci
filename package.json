@@ -36,8 +36,10 @@
   },
   "dependencies": {
     "chalk": "^4.1.0",
+    "dingtalk-robot-sdk": "^1.1.0",
     "minimist": "^1.2.5",
     "miniprogram-ci": "^1.0.45",
+    "miniu": "^1.11.3",
     "ora": "^4.0.4"
   },
   "devDependencies": {
