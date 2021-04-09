@@ -1,7 +1,6 @@
 // import chalk from "chalk";
-import minimist from "minimist";
 import build from "./command/build";
-// import upload from "./command/upload"
+import upload from "./command/upload";
 
 // import ora from "ora";
 // import chalk from "chalk";
@@ -13,17 +12,10 @@ import build from "./command/build";
 //   // spinner.succeed(chalk.yellow(`项目构建成功!`));
 // }
 
-const args = minimist(process.argv.slice(2));
 
 async function init() {
-  const { watch } = args;
-  const isWatch = Boolean(watch)
-  await build(isWatch);
-
-  if (!isWatch) {
-    // 生产模式，打包后自动上传到对应平台
-    // await upload();
-  }
+  await build();
+  await upload();
 }
 
 

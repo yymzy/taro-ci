@@ -1,11 +1,11 @@
 // import ora from "ora";
 // import chalk from "chalk";
 
-type BuildResult = {
+type UploadResult = {
   status: String
 }
 
-async function upload(): Promise<BuildResult> {
+async function upload(): Promise<UploadResult> {
 
 
   return {
