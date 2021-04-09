@@ -4,13 +4,13 @@ const args = minimist(process.argv.slice(2));
 
 async function build() {
   // 读取配置项
-  const config = await readConfig("taro-ci.config.js");
-  const { watch, type = config.types } = args;
+  const config = await readConfig();
+  
+  const { watch, type = config.modes.map(item => item.type) } = args;
   const isWatch = Boolean(watch);
-  const list = Array.isArray(type) ? type : [type];
+  const list = type ? Array.isArray(type) ? type : [type] : null;
 
-  if (!list) return
-  console.log("config：", config);
+  if (!list) return;
 
   for (let item of list) {
     try {
@@ -18,7 +18,7 @@ async function build() {
 
       // 生成打印指令
       let commandStr = `Taro build --type ${type}`;
-      
+
       if (isWatch) {
         // 开发模式，开启监听
         commandStr += " --watch";

@@ -84,7 +84,7 @@ export function commandTrigger(commandStr: string, env: EnvCustom): Promise<Comm
  * @param name 
  * @returns 
  */
-export function readConfig(name: string) {
+export function readConfig(name: string = "taro-ci.config.js") {
   try {
     const config = require(path.resolve("./", name));
     return typeof config === 'function' ? config(merge) : config
