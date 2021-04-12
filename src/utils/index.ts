@@ -1,20 +1,11 @@
 import { spawn } from "child_process";
 import chalk from "chalk";
 import path from "path";
-
-// 命令返回
-type CommandPromiseRes = {
-  code: number,
-  err?: string
-}
-
-// 自定义环境变量
-type EnvCustom = {
-  MODE_ENV: string,
-  [propertys: string]: any;
-}
+import fs from "fs";
+import { CommandPromiseRes, ConfigOptions, EnvCustom, TaroEnv } from "types";
 
 /**
+ * 
  * @description 输出配色，替换关键词
  * @param str 
  * @param tag 
@@ -51,7 +42,7 @@ function consoleBufferByTheme(data: ArrayBuffer): string {
  * @param commandStr 命令行字符串
  * @returns 
  */
-export function commandTrigger(commandStr: string, env: EnvCustom): Promise<CommandPromiseRes> {
+export function commandTrigger(commandStr: string, isWatch: boolean, env: EnvCustom): Promise<CommandPromiseRes> {
   return new Promise((resolve) => {
     const [command, ...arg] = commandStr.split(/\s/g);
 
@@ -71,8 +62,16 @@ export function commandTrigger(commandStr: string, env: EnvCustom): Promise<Comm
     // 打印错误输出
     subprocess.stderr.on('data', data => {
       consoleBufferByTheme(data);
-      resolve({ code: 0 });
+      if (isWatch) {
+        resolve({ code: 0 });
+      }
     });
+
+    subprocess.on("exit", () => {
+      if (!isWatch) {
+        resolve({ code: 0 });
+      }
+    })
 
     // 监听报错信息
     subprocess.on('error', (err) => console.error(err));
@@ -81,6 +80,7 @@ export function commandTrigger(commandStr: string, env: EnvCustom): Promise<Comm
 
 /**
  * 
+ * @description 读取ci配置
  * @param name 
  * @returns 
  */
@@ -93,6 +93,71 @@ export function readConfig(name: string = "taro-ci.config.js") {
   }
 }
 
+/**
+ * 
+ * @description 获取类似Taro的环境变量，包含aliapp，weapp
+ * @param item 
+ * @returns 
+ */
+export function getTARO_ENV(item: string) {
+  return item.split("-")[0].toUpperCase();
+}
+
+/**
+ * 
+ * @description 输出路径
+ * @param item 
+ * @param isWatch 
+ * @returns 
+ */
+function createOutPath(item: string, isWatch: boolean): string {
+  const paths = item.split("-");
+  paths.splice(1, 0, isWatch ? "dev" : "build");
+  return paths.join("-")
+}
+
+/**
+ * 
+ * @param item 
+ * @returns 
+ */
+export function getProjectConfigPath(item: string) {
+  const TARO_ENV = getTARO_ENV(item);
+  return path.resolve("./", `${TARO_ENV === TaroEnv.WEAPP ? "project.config" : "mini.project"}.json`)
+}
+
+/**
+ * 
+ * @description 重写小程序配置文件 project.config.json
+ */
+export function rewriteProjectConfig(item: string, opts: ConfigOptions) {
+  return new Promise((resolve, reject) => {
+    const { appId, isWatch } = opts
+    const outPath = `dist/${createOutPath(item, isWatch)}`;
+    const projectConfigPath = getProjectConfigPath(item);
+    fs.readFile(projectConfigPath, (err, data) => {
+      if (err) {
+        reject(err)
+        return
+      }
+      const projectConfig = JSON.parse(data.toString()); //将二进制的数据转换为字符串
+      projectConfig.miniprogramRoot = outPath;
+      projectConfig.appid = appId;
+
+      fs.writeFile(
+        projectConfigPath,
+        JSON.stringify(projectConfig, null, 4),
+        (err) => {
+          if (err) {
+            reject(err);
+            return false;
+          }
+          resolve({});
+        }
+      );
+    });
+  })
+}
 
 export function isObject(obj) {
   return Object.prototype.toString.call(obj) === '[object Object]'
