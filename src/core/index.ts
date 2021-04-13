@@ -27,8 +27,8 @@ async function init() {
         await notice(item, uploadResponse);
       }
     } catch (err) {
-      await notice(item, { error: err });
       console.log(chalk.red("处理失败"), err.message);
+      await notice(item, { error: err });
     }
   }
 }
