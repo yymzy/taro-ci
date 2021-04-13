@@ -8,7 +8,7 @@ import { getAndFormatConfigInfo, getTARO_ENV, readConfig } from "utils";
  */
 async function notice(item: string, uploadResponse: UploadResponse) {
     const { notice, name } = readConfig();
-    const { version, description, label } = getAndFormatConfigInfo(item)
+    const { version, description, label } = getAndFormatConfigInfo(item);
     const { result, error } = uploadResponse;
     const TARO_ENV = getTARO_ENV(item);
     const { qrCodeUrl } = result || {};
@@ -28,7 +28,7 @@ async function notice(item: string, uploadResponse: UploadResponse) {
         content.add(`上传结果：上传成功${TARO_ENV === TaroEnv.ALIPAY ? "【发布后合并到master】" : ""}`)
             .add(`1. version：${version}`)
             .add(`2. description：${description}`)
-            .add(qrCodeUrl ? `![二维码](${qrCodeUrl})` : "");
+            .add(qrCodeUrl ? `\n![二维码](${qrCodeUrl})` : "");
     }
 
     ddIns.send(content);
