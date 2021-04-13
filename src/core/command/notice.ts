@@ -12,6 +12,9 @@ async function notice(item: string, uploadResponse: UploadResponse) {
     const { result, error } = uploadResponse;
     const TARO_ENV = getTARO_ENV(item);
     const { qrCodeUrl } = result || {};
+    if (!notice) {
+        throw new Error("缺少taro-ci.config.notice配置项，无法发送钉钉通知");
+    }
     const ddIns = new Robot(notice);
 
     const markdownTitle = `[${item}]${name}`.toUpperCase() + "：" + label;

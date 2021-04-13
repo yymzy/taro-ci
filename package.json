@@ -2,7 +2,7 @@
   "name": "taro-ci",
   "version": "1.0.0",
   "main": "dist/taro-ci.js",
-  "types": "dist/lib/types/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "bin": {
     "taro-ci": "bin/taro-ci.js"
   },

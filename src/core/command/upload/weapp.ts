@@ -4,10 +4,14 @@ import ci from "miniprogram-ci";  // 微信sdk
 import { UploadResponse } from "types";
 
 async function weapp(item: string): Promise<UploadResponse> {
-    const config = await readConfig();
-    const { appId } = config.info[item];
+    const { info = {} } = await readConfig();
+    const { appId } = info[item];
     const { version, description: desc, robot } = getAndFormatConfigInfo(item);
     let error = null;
+
+    if (!appId) {
+        throw new Error("缺少taro-ci.config.info配置项，或缺少info[type].appId，无法上传到微信平台");
+    }
 
     const project = new ci.Project({
         appid: appId,
