@@ -1,5 +1,5 @@
 {
-  "name": "taro-mini-ci",
+  "name": "taro-ci",
   "version": "1.0.0",
   "main": "dist/taro-ci.js",
   "types": "dist/types/index.d.ts",
