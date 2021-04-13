@@ -2,7 +2,9 @@ import { spawn } from "child_process";
 import chalk from "chalk";
 import path from "path";
 import fs from "fs";
-import { CommandPromiseRes, ConfigOptions, EnvCustom, TaroEnv } from "types";
+import minimist from "minimist";
+import moment from "moment";
+import { CommandPromiseRes, BuildOptions, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot } from "types";
 
 /**
  * 
@@ -35,6 +37,22 @@ function consoleBufferByTheme(data: ArrayBuffer): string {
   console.log(str);
   return str;
 }
+
+// 发布包对应版本
+export const pkgMap: PkgMap = {
+  "1": {
+    label: "体验",
+    key: "Beta"
+  },
+  "2": {
+    label: "候选",
+    key: "Rc"
+  },
+  "3": {
+    label: "正式",
+    key: ""
+  }
+};
 
 /**
  * 
@@ -84,13 +102,9 @@ export function commandTrigger(commandStr: string, isWatch: boolean, env: EnvCus
  * @param name 
  * @returns 
  */
-export function readConfig(name: string = "taro-ci.config.js") {
-  try {
-    const config = require(path.resolve("./", name));
-    return typeof config === 'function' ? config(merge) : config
-  } catch (error) {
-    return {}
-  }
+export function readConfig(name: string = "taro-ci.config.js"): ConfigOptions {
+  const config = require(path.resolve("./", name));
+  return typeof config === 'function' ? config(merge) : config
 }
 
 /**
@@ -130,7 +144,7 @@ export function getProjectConfigPath(item: string) {
  * 
  * @description 重写小程序配置文件 project.config.json
  */
-export function rewriteProjectConfig(item: string, opts: ConfigOptions) {
+export function rewriteProjectConfig(item: string, opts: BuildOptions) {
   return new Promise((resolve, reject) => {
     const { appId, isWatch } = opts
     const outPath = `dist/${createOutPath(item, isWatch)}`;
@@ -157,6 +171,38 @@ export function rewriteProjectConfig(item: string, opts: ConfigOptions) {
       );
     });
   })
+}
+
+/**
+ * 
+ * @description 将参数组合通过 "-" 连线 
+ * @param arg 
+ * @returns 
+ */
+function formatStrWithLine(...arg: Array<string>): string {
+  return arg.filter(item => !!item).join("-")
+}
+
+/**
+ * 
+ * @description 获取taro-ci.config.info 并根据一定规则格式化
+ * @param item 
+ * @param robot 
+ */
+export function getAndFormatConfigInfo(item: string): ConfigInfoResponse {
+  const { robot } = minimist(process.argv.slice(2));
+  const { version: rV, description: rD, info } = readConfig();
+  const { version: iV, description: iD, tag = "", label: iLabel = "", robot: iRobot = 1 } = info[item];
+  const { label: pkgLabel, key: pkgKey } = pkgMap[robot + ""];   // [体验版、正式版、临时版]
+  const label = formatStrWithLine(pkgLabel, iLabel);
+  return {
+    robot: (robot * 1) + (iRobot - 1) * 2 as Robot,
+    version: formatStrWithLine(pkgKey, tag + (iV || rV)),
+    description: `【${label}版-${moment().format(
+      "YYYYMMDDHHmmss"
+    )}】：${iD || rD}`,
+    label
+  }
 }
 
 export function isObject(obj) {

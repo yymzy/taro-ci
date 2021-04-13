@@ -6,23 +6,12 @@ import chalk from "chalk";
 import { readConfig, rewriteProjectConfig } from "utils";
 const args = minimist(process.argv.slice(2));
 
-// import ora from "ora";
-// import chalk from "chalk";
-// const spinner = ora().start(chalk.yellow(`项目构建中... \n`));
-
-// if (code !== 0) {
-//   // spinner.fail(chalk.red(`项目构建失败:${err} \n`));
-// } else {
-//   // spinner.succeed(chalk.yellow(`项目构建成功!`));
-// }
-
-
 async function init() {
   // 读取ci配置项
   const config = await readConfig();
-  const { watch, ci, type = config.type } = args;
+  const { watch, robot, type = config.type } = args;
   const isWatch = Boolean(watch);
-  const isCi = Boolean(ci);
+  const isCi = Boolean(robot);
   const list = type ? Array.isArray(type) ? type : [type] : null;
   if (!list) return;
 
@@ -34,16 +23,14 @@ async function init() {
       await build(item, { isWatch });
       if (!isWatch && isCi) {
         // 自动化上传
-        await upload(item);
-        await notice();
+        const uploadResponse = await upload(item);
+        await notice(item, uploadResponse);
       }
-    } catch (error) {
-      console.log(chalk.red("处理失败"), error.message);
+    } catch (err) {
+      await notice(item, { error: err });
+      console.log(chalk.red("处理失败"), err.message);
     }
   }
-
-
 }
-
 
 export default init;

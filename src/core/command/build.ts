@@ -1,7 +1,7 @@
-import { ConfigOptions } from "types";
+import { BuildOptions } from "types";
 import { commandTrigger } from "utils";
 
-async function build(item: string, opts: ConfigOptions) {
+async function build(item: string, opts: BuildOptions) {
   const { isWatch } = opts
   const [type, ...modes] = item.split("-");
 
