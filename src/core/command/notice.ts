@@ -24,9 +24,9 @@ async function notice(item: string, uploadResponse: UploadResponse) {
         .add(`[${markdownTitle}](https://newgitlab.kuaidihelp.com/MINIAPP/${name}/-/jobs/)\n`)
 
     if (error) {
-        content.add(`上传结果：上传失败（${error.message}）`);
+        content.add(`**上传结果：上传失败**<font color="red">（${error.message}）</font>`);
     } else {
-        content.add(`上传结果：上传成功${TARO_ENV === TaroEnv.ALIPAY ? "【发布后合并到master】" : ""}`)
+        content.add(`**上传结果：上传成功**${TARO_ENV === TaroEnv.ALIPAY ? "【发布后合并到master】" : ""}`)
             .add(`1. version：${version}`)
             .add(`2. description：${description}`)
             .add(qrCodeUrl ? `\n![二维码](${qrCodeUrl})` : "");
