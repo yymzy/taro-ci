@@ -126,7 +126,7 @@ const commitChanges = async () => {
   if (stdout) {
     progress("Committing changes...");
     await run("git", ["add", "-A"]);
-    await run("git", ["commit", "-m", `release: v${version}`]);
+    await run("git", ["commit", "-m", `release: v${version} ${args.m}`]);
   } else {
     console.log(chalk.yellow(`No changes to commit. \n`));
   }

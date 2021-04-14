@@ -1,15 +1,13 @@
 import build from "./command/build";
 import upload from "./command/upload";
 import notice from "./command/notice";
-import minimist from "minimist";
 import chalk from "chalk";
-import { readConfig, rewriteProjectConfig } from "utils";
-const args = minimist(process.argv.slice(2));
+import { getArgs, readConfig, rewriteProjectConfig } from "utils";
 
 async function init() {
   // 读取ci配置项
   const config = await readConfig();
-  const { watch, robot, type = config.type } = args;
+  const { watch, robot, type = config.type } = getArgs();
   const isWatch = Boolean(watch);
   const isCi = Boolean(robot);
   const list = type ? Array.isArray(type) ? type : [type] : null;

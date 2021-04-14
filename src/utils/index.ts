@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import minimist from "minimist";
 import moment from "moment";
-import { CommandPromiseRes, BuildOptions, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot } from "types";
+import { CommandPromiseRes, BuildOptions, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse } from "types";
 
 /**
  * 
@@ -109,6 +109,22 @@ export function readConfig(name: string = "taro-ci.config.js"): ConfigOptions {
 
 /**
  * 
+ * @description 获取命令行参数
+ * @returns 
+ */
+export function getArgs(): ArgsResponse {
+  const { ci = "", dd = "", ...rest } = minimist(process.argv.slice(2), { boolean: ["watch"] });
+  const [toolId, privateKey] = ci.split(",");
+  const [accessToken, secret] = dd.split(",");
+  return {
+    ci: ci ? { toolId, privateKey } : void (0),
+    dd: dd ? { accessToken, secret } : void (0),
+    ...rest
+  } as ArgsResponse;
+}
+
+/**
+ * 
  * @description 获取类似Taro的环境变量，包含aliapp，weapp
  * @param item 
  * @returns 
@@ -190,13 +206,13 @@ function formatStrWithLine(...arg: Array<string>): string {
  * @param robot 
  */
 export function getAndFormatConfigInfo(item: string): ConfigInfoResponse {
-  const { robot } = minimist(process.argv.slice(2));
+  const { robot } = getArgs();
   const { version: rV, description: rD, info } = readConfig();
   const { version: iV, description: iD, tag = "", label: iLabel = "", robot: iRobot = 1 } = info[item];
   const { label: pkgLabel, key: pkgKey } = pkgMap[robot + ""];   // [体验版、正式版、临时版]
   const label = formatStrWithLine(pkgLabel, iLabel);
   return {
-    robot: (robot * 1) + (iRobot - 1) * 2 as Robot,
+    robot: robot + (iRobot - 1) * 2 as Robot,
     version: formatStrWithLine(pkgKey, tag + (iV || rV)),
     description: `【${label}版-${moment().format(
       "YYYYMMDDHHmmss"

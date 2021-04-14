@@ -1,3 +1,4 @@
+import minimist from "minimist";
 // 命令返回
 export type CommandPromiseRes = {
   code: number,
@@ -15,8 +16,19 @@ export type BuildOptions = {
   isWatch?: boolean
 };
 
+export type Ci = { privateKey: string, toolId: string }
+export type Dd = { accessToken: string, secret: string }
+// 携带参数
+export interface ArgsResponse extends minimist.ParsedArgs {
+  robot: Robot,
+  watch: boolean,
+  ci?: Ci,
+  dd?: Dd,
+  [propertys: string]: any
+}
+
 // info组内选项
-type InfoOptions = {
+export type InfoOptions = {
   appId: string,
   version?: string,
   description?: string,
@@ -34,16 +46,8 @@ export type ConfigOptions = {
   info: {
     [propertys: string]: InfoOptions
   },
-  ci: {
-    alipay?: {
-      toolId: string,
-      privateKey: string
-    }
-  },
-  notice: {
-    accessToken: string,
-    secret: string
-  }
+  ci?: Ci,
+  dd?: Dd,
 }
 
 export type UploadResponse = {
