@@ -1,3 +1,5 @@
+## [1.1.5](https://new.github.com/yymzy/taro-ci/compare/v1.1.4...v1.1.5) (2021-04-15)
+
 ## [1.1.4](https://new.github.com/yymzy/taro-ci/compare/v1.1.3...v1.1.4) (2021-04-14)
 
 ## [1.1.3](https://new.github.com/yymzy/taro-ci/compare/v1.1.2...v1.1.3) (2021-04-14)

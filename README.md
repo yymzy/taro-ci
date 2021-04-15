@@ -6,7 +6,7 @@
 
 ---
 
-> 小程序项目根目录下**package.json 配置 script 命令**
+> 小程序项目根目录下**package.json 配置 script 命令** 注意：目前robot仅支持[1,3]
 >
 > ```json
 > {
