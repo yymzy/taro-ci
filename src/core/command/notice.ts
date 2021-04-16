@@ -8,7 +8,7 @@ import { getAndFormatConfigInfo, getArgs, getTARO_ENV, readConfig } from "utils"
  */
 async function notice(item: string, uploadResponse: UploadResponse) {
     const { dd: argsDD } = getArgs();
-    const { dd = argsDD, name } = readConfig();
+    const { dd = argsDD, name, git = `https://newgitlab.kuaidihelp.com/MINIAPP/${name}/-/jobs/` } = readConfig();
     const { version, description, label } = getAndFormatConfigInfo(item);
     const { result, error } = uploadResponse;
     const TARO_ENV = getTARO_ENV(item);
@@ -21,7 +21,7 @@ async function notice(item: string, uploadResponse: UploadResponse) {
     const markdownTitle = `[${item}]${name}`.toUpperCase() + "：" + label;
     const content = new Robot.Markdown()
         .setTitle(markdownTitle)
-        .add(`[${markdownTitle}](https://newgitlab.kuaidihelp.com/MINIAPP/${name}/-/jobs/)\n`)
+        .add(`[${markdownTitle}](${git})\n`)
 
     if (error) {
         content.add(`**上传结果：上传失败**<font color="red">（${error.message}）</font>`);

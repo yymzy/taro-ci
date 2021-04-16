@@ -6,7 +6,7 @@
 
 ---
 
-> 小程序项目根目录下**package.json 配置 script 命令** 注意：目前robot仅支持[1,3]
+> 小程序项目根目录下**package.json 配置 script 命令** 注意：目前 robot 仅支持[1,3]
 >
 > ```json
 > {
@@ -26,27 +26,28 @@
  * 根目录增加配置文件 taro-ci.config.js
  */
 
-module.exports =  {
+module.exports = {
   name: "miniapp-wkd",
   version: "1.0.0",
   description: "通用描述信息",
-  type: ["weapp","alipay","weapp-third-pro"],
+  type: ["weapp", "alipay", "weapp-third-pro"],
   info: {
     weapp: {
       version: "1.1.0",
       description: "对应版本的针对性描述",
-      appId: "wx329184e83305a690"
+      appId: "wx329184e83305a690",
     },
     "weapp-third": {
       appId: "wx329184e83305a690",
-      label: "普通",  // 特殊版本的标签
-      tag: "N",      // 特殊版本的标签体现在版本号上 N1.2.0
-      robot: 1       // 特殊版本微信上传使用的robot计算依据 1 + (robot-1) *2
+      label: "普通", // 特殊版本的标签
+      tag: "N", // 特殊版本的标签体现在版本号上 N1.2.0
+      robot: 1, // 特殊版本微信上传使用的robot计算依据 1 + (robot-1) *2
     },
     alipay: {
-      appId: "支付宝的APPID"
-    }
+      appId: "支付宝的APPID",
+    },
   },
+  git: "", // 当前项目对应的git地址
   // 支付宝工具id与私钥
   // ci: {
   //   toolId: "",
@@ -57,16 +58,21 @@ module.exports =  {
   //   accessToken: "",
   //   secret: ""
   // }
-}
+};
 ```
 
 ---
 
 > 微信小程序生成[上传秘钥](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)文件 **private.wx329184e83305a690.key** 放到项目根目录下
+
 ---
-> 支付宝小程序生成[工具id与私钥](https://opendocs.alipay.com/mini/miniu/command-intro#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE) 配置到 **taro-ci.config.json中的ci配置项** 或者配置到命令行 **--ci=toolId,privateKey**
+
+> 支付宝小程序生成[工具 id 与私钥](https://opendocs.alipay.com/mini/miniu/command-intro#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE) 配置到 **taro-ci.config.json 中的 ci 配置项** 或者配置到命令行 **--ci=toolId,privateKey**
+
 ---
-> 获取的钉钉通知消息所需的**token与秘钥**：找到对应的群 >点击群设置 >智能群助手 >添加机器人 >选择自定义 >确认添加后，选择加签即可获得对应的accessToken与secret，将值配置到 **taro-ci.config.json中的dd配置项** 或者配置到命令行 **--dd=accessToken,secret**
+
+> 获取的钉钉通知消息所需的**token 与秘钥**：找到对应的群 >点击群设置 >智能群助手 >添加机器人 >选择自定义 >确认添加后，选择加签即可获得对应的 accessToken 与 secret，将值配置到 **taro-ci.config.json 中的 dd 配置项** 或者配置到命令行 **--dd=accessToken,secret**
+
 ## 使用许可
 
 [MIT](LICENSE) © yymzy

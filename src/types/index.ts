@@ -46,6 +46,7 @@ export type ConfigOptions = {
   info: {
     [propertys: string]: InfoOptions
   },
+  git?: string,
   ci?: Ci,
   dd?: Dd,
 }
