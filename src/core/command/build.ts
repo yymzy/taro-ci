@@ -6,7 +6,7 @@ async function build(item: string, opts: BuildOptions) {
   const [type, ...modes] = item.split("-");
 
   // 生成打印指令
-  let commandStr = `Taro build --type ${type}`;
+  let commandStr = `taro build --type ${type}`;
 
   if (isWatch) {
     // 开发模式，开启监听
