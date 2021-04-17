@@ -11,6 +11,7 @@ export type EnvCustom = {
   [propertys: string]: any;
 }
 
+// 打包配置项
 export type BuildOptions = {
   appId?: string,
   isWatch?: boolean

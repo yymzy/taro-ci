@@ -31,7 +31,7 @@ async function notice(item: string, uploadResponse: UploadResponse) {
             .add(`2. description：${description}`)
             .add(qrCodeUrl ? `\n![二维码](${qrCodeUrl})` : "");
     }
-
+    
     ddIns.send(content);
 }
 
