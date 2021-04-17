@@ -1,4 +1,4 @@
-import { getAndFormatConfigInfo, readConfig } from "utils";
+import { getAndFormatConfigInfo, readConfig, readProjectConfig } from "utils";
 import path from "path";
 import ci from "miniprogram-ci";  // 微信sdk
 import { UploadResponse } from "types";
@@ -7,6 +7,7 @@ async function weapp(item: string): Promise<UploadResponse> {
     const { info = {} } = await readConfig();
     const { appId } = info[item];
     const { version, description: desc, robot } = getAndFormatConfigInfo(item);
+    const { setting = {} } = await readProjectConfig(item);
     let error = null;
 
     if (!appId) {
@@ -26,9 +27,7 @@ async function weapp(item: string): Promise<UploadResponse> {
         project,
         version,
         desc,
-        setting: {
-            es6: true,
-        },
+        setting,
         onProgressUpdate: console.log
     }).catch(err => error = err);
 

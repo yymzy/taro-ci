@@ -1,6 +1,6 @@
 # taro-ci
 
-基于[微信：miniprogram-ci](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)、[支付宝：miniu](https://opendocs.alipay.com/mini/miniu/command-intro)开发，用于同时打包 weapp、alipay、weapp-third-pro 多版本发布管理；第一个横线后半部分会作为环境变量注入到 Taro 框架小程序中【process.env.MODE_ENV=THIRD-PRO】
+基于[微信：miniprogram-ci](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)、[支付宝：miniu](https://opendocs.alipay.com/mini/miniu/command-intro)开发，用于同时打包 weapp、alipay、weapp-third-pro 多版本发布管理；第一个横线后半部分会作为环境变量注入到 Taro 框架小程序中【process.env.MODE_ENV=THIRD-PRO】；执行taro build时置入的环境变量还包括 process.env.ROOT_PATH=当前文件包输出路径，例：dist/weapp-dev
 
 **小程序开发必须基于[Taro](https://taro-docs.jd.com/)开发**
 

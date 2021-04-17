@@ -98,10 +98,17 @@ export type ConfigInfoResponse = {
   robot?: Robot
 }
 
+export type ProjectConfig = {
+  miniprogramRoot: string,
+  appid: string,
+  setting: {
+    [propertys: string]: any
+  }
+}
+
 export type PkgMap = { [propertys: string]: { label: string, key: string } };
 
 export enum TaroEnv {
   "WEAPP" = "WEAPP",
   "ALIPAY" = "ALIPAY"
 }
-

@@ -1,5 +1,5 @@
 import { BuildOptions } from "types";
-import { commandTrigger } from "utils";
+import { commandTrigger, readProjectConfig } from "utils";
 
 async function build(item: string, opts: BuildOptions) {
   const { isWatch } = opts
@@ -13,9 +13,12 @@ async function build(item: string, opts: BuildOptions) {
     commandStr += " --watch";
   }
 
+  const { miniprogramRoot } = await readProjectConfig(item);
+
   // 执行命令
   await commandTrigger(commandStr, isWatch, {
     MODE_ENV: modes.join("-").toLocaleUpperCase(),
+    ROOT_PATH: miniprogramRoot
   });
 }
 

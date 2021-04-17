@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import minimist from "minimist";
 import moment from "moment";
-import { CommandPromiseRes, BuildOptions, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse } from "types";
+import { CommandPromiseRes, BuildOptions, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse, ProjectConfig } from "types";
 
 /**
  * 
@@ -158,12 +158,12 @@ export function getProjectConfigPath(item: string) {
 
 /**
  * 
- * @description 重写小程序配置文件 project.config.json
+ * @description 读取项目配置信息
+ * @param item 
+ * @returns 
  */
-export function rewriteProjectConfig(item: string, opts: BuildOptions) {
+export function readProjectConfig(item: string): Promise<ProjectConfig> {
   return new Promise((resolve, reject) => {
-    const { appId, isWatch } = opts
-    const outPath = `dist/${createOutPath(item, isWatch)}`;
     const projectConfigPath = getProjectConfigPath(item);
     fs.readFile(projectConfigPath, (err, data) => {
       if (err) {
@@ -171,6 +171,22 @@ export function rewriteProjectConfig(item: string, opts: BuildOptions) {
         return
       }
       const projectConfig = JSON.parse(data.toString()); //将二进制的数据转换为字符串
+      resolve(projectConfig);
+    });
+  })
+}
+
+/**
+ * 
+ * @description 重写小程序配置文件 project.config.json
+ */
+export function rewriteProjectConfig(item: string, opts: BuildOptions): Promise<ProjectConfig> {
+  return new Promise((resolve, reject) => {
+    const { appId, isWatch } = opts
+    const outPath = `dist/${createOutPath(item, isWatch)}`;
+    const projectConfigPath = getProjectConfigPath(item);
+
+    readProjectConfig(item).then((projectConfig) => {
       projectConfig.miniprogramRoot = outPath;
       projectConfig.appid = appId;
 
@@ -182,10 +198,11 @@ export function rewriteProjectConfig(item: string, opts: BuildOptions) {
             reject(err);
             return false;
           }
-          resolve({});
+          resolve(projectConfig);
         }
       );
-    });
+    }).catch(reject)
+
   })
 }
 
