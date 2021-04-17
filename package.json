@@ -1,6 +1,6 @@
 {
   "name": "taro-ci",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "dist/taro-ci.js",
   "types": "dist/types/index.d.ts",
   "bin": {
