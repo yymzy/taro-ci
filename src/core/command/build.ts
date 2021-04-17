@@ -22,5 +22,4 @@ async function build(item: string, opts: BuildOptions) {
   });
 }
 
-
 export default build;
