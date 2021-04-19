@@ -8,6 +8,7 @@ export type CommandPromiseRes = {
 // 自定义环境变量
 export type EnvCustom = {
   MODE_ENV: string,
+  ROOT_PATH: string,
   [propertys: string]: any;
 }
 
