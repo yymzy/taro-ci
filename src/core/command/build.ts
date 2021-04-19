@@ -13,12 +13,13 @@ async function build(item: string, opts: BuildOptions) {
     commandStr += " --watch";
   }
 
-  const { miniprogramRoot } = await readProjectConfig(item);
+  const { miniprogramRoot: ROOT_PATH } = await readProjectConfig(item);
+  const MODE_ENV = modes.join("-").toLocaleUpperCase();
 
   // 执行命令
   await commandTrigger(commandStr, isWatch, {
-    MODE_ENV: modes.join("-").toLocaleUpperCase(),
-    ROOT_PATH: miniprogramRoot
+    MODE_ENV,
+    ROOT_PATH
   });
 }
 
