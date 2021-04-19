@@ -69,9 +69,10 @@ export function commandTrigger(commandStr: string, isWatch: boolean, env?: EnvCu
         ...env
       }
     });
-    const { MODE_ENV = "" } = env || {}
+    const { MODE_ENV = "" } = env || {};
+
     // 打印当前执行的指令
-    console.log(chalk.red("COMMAND:"), commandStr, chalk.red("MODE_ENV:"), MODE_ENV)
+    console.log(chalk.red("COMMAND:"), commandStr, chalk.red("MODE_ENV:"), MODE_ENV);
 
     // 打印数据输出
     subprocess.stdout.on('data', consoleBufferByTheme);
@@ -88,7 +89,7 @@ export function commandTrigger(commandStr: string, isWatch: boolean, env?: EnvCu
       if (!isWatch) {
         resolve({ code: 0 });
       }
-    })
+    });
 
     // 监听报错信息
     subprocess.on('error', (err) => console.error(err));
