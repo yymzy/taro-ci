@@ -60,19 +60,18 @@ export const pkgMap: PkgMap = {
  * @param commandStr 命令行字符串
  * @returns 
  */
-export function commandTrigger(commandStr: string, isWatch: boolean, env: EnvCustom): Promise<CommandPromiseRes> {
+export function commandTrigger(commandStr: string, isWatch: boolean, env?: EnvCustom): Promise<CommandPromiseRes> {
   return new Promise((resolve) => {
     const [command, ...arg] = commandStr.split(/\s/g);
-
     const subprocess = spawn(command, arg, {
       env: {
         ...process.env,
         ...env
       }
     });
-
+    const { MODE_ENV = "" } = env || {}
     // 打印当前执行的指令
-    console.log(chalk.red("COMMAND:"), commandStr, chalk.red("MODE_ENV:"), env.MODE_ENV)
+    console.log(chalk.red("COMMAND:"), commandStr, chalk.red("MODE_ENV:"), MODE_ENV)
 
     // 打印数据输出
     subprocess.stdout.on('data', consoleBufferByTheme);
@@ -113,12 +112,13 @@ export function readConfig(name: string = "taro-ci.config.js"): ConfigOptions {
  * @returns 
  */
 export function getArgs(): ArgsResponse {
-  const { ci = "", dd = "", ...rest } = minimist(process.argv.slice(2), { boolean: ["watch"] });
+  const { ci = "", dd = "", robot = 1, ...rest } = minimist(process.argv.slice(2), { boolean: ["watch"] });
   const [toolId, privateKey] = ci.split(",");
   const [accessToken, secret] = dd.split(",");
   return {
     ci: ci ? { toolId, privateKey } : void (0),
     dd: dd ? { accessToken, secret } : void (0),
+    robot,
     ...rest
   } as ArgsResponse;
 }
