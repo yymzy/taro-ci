@@ -6,12 +6,12 @@ import { getAndFormatConfigInfo, getArgs, getTARO_ENV, readConfig } from "utils"
  * 
  * @description 通过钉钉群发送上传结果通知
  */
-async function notice(item: string, uploadResponse: UploadResponse) {
+async function notice(uploadResponse: UploadResponse) {
+    const { result, error, item } = uploadResponse;
     const { dd: argsDD } = getArgs();
     const { dd = argsDD, name, git = `https://newgitlab.kuaidihelp.com/MINIAPP/${name}/-/jobs/` } = readConfig();
     const { version, description, label } = getAndFormatConfigInfo(item);
-    const { result, error } = uploadResponse;
-    const TARO_ENV = getTARO_ENV(item);
+    const TARO_ENV = getTARO_ENV();
     const { qrCodeUrl } = result || {};
     if (!dd) {
         throw new Error("缺少taro-ci.config.notice配置项，无法发送钉钉通知");
@@ -31,7 +31,7 @@ async function notice(item: string, uploadResponse: UploadResponse) {
             .add(`2. description：${description}`)
             .add(qrCodeUrl ? `\n![二维码](${qrCodeUrl})` : "");
     }
-    
+
     ddIns.send(content);
 }
 

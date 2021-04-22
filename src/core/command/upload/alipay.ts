@@ -28,6 +28,7 @@ async function alipay(item: string): Promise<UploadResponse> {
     }).catch(({ code, msg }) => error = new Error(`${code}：${msg}`));
 
     return {
+        item,
         result,
         error
     }

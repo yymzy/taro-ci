@@ -1,8 +1,16 @@
 # taro-ci
 
-基于[微信：miniprogram-ci](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)、[支付宝：miniu](https://opendocs.alipay.com/mini/miniu/command-intro)开发，用于同时打包 weapp、alipay、weapp-third-pro 多版本发布管理；第一个横线后半部分会作为环境变量注入到 Taro 框架小程序中【process.env.MODE_ENV=THIRD-PRO】；执行 taro build 时置入的环境变量还包括 process.env.ROOT_PATH=当前文件包输出路径，例：dist/weapp-dev；
+基于[微信：miniprogram-ci](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)、[支付宝：miniu](https://opendocs.alipay.com/mini/miniu/command-intro)开发，用于同时打包 weapp、alipay、weapp.third.pro 多版本发布管理；第一个横线后半部分会作为环境变量注入到 Taro 框架小程序中【process.env.MODE_ENV=third.pro】；执行 taro build 时置入的环境变量还包括 process.env.ROOT_PATH=当前文件包输出路径，例：dist/weapp.dev；process.env.PLATFORM_ENV=weapp|alipay；
 
-> 注意： 如需在项目中使用 process.env.MODE_ENV 需要对 Taro 项目配置 config/index.config.env.MODE_ENV=process.env.MODE_ENV
+扩展编译平台使用 [taro-plugin-build](https://www.npmjs.com/package/taro-plugin-build)，并在 taro-ci.config 中配置 useTaroPluginBuild=true，插件编译时自动注册对应的编译平台
+
+> 注意： 如需在项目中使用 MODE_ENV|PLATFORM_ENV
+>
+> 需要对 Taro 项目配置：
+>
+> config/index.config.env.MODE_ENV=process.env.MODE_ENV
+>
+> config/index.config.env.PLATFORM_ENV=process.env.PLATFORM_ENV
 
 **小程序开发必须基于[Taro](https://taro-docs.jd.com/)开发**
 
@@ -49,6 +57,7 @@ module.exports = {
       appId: "支付宝的APPID",
     },
   },
+  useTaroPluginBuild: false, // 是否使用taro-plugin-build插件
   git: "", // 当前项目对应的git地址
   // 支付宝工具id与私钥
   // ci: {

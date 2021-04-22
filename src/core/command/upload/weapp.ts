@@ -7,7 +7,7 @@ async function weapp(item: string): Promise<UploadResponse> {
     const { info = {} } = await readConfig();
     const { appId } = info[item];
     const { version, description: desc, robot } = getAndFormatConfigInfo(item);
-    const { setting = {} } = await readProjectConfig(item);
+    const { setting = {} } = await readProjectConfig();
     let error = null;
 
     if (!appId) {
@@ -32,6 +32,7 @@ async function weapp(item: string): Promise<UploadResponse> {
     }).catch(err => error = err);
 
     return {
+        item,
         error,
         result
     }

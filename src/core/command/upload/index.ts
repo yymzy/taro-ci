@@ -1,10 +1,14 @@
 import { TaroEnv, UploadResponse } from "types";
-import { getTARO_ENV } from "utils";
+import { getArgs, getTARO_ENV } from "utils";
 import weapp from "./weapp";
 import alipay from "./alipay";
 
 async function upload(item: string): Promise<UploadResponse> {
-    const TARO_ENV = getTARO_ENV(item);
+    const { isCi, isWatch } = getArgs()
+    if (isWatch || !isCi) {
+        throw new Error(`${item}，未传入robot或者开发模式无法上传`);
+    }
+    const TARO_ENV = getTARO_ENV();
 
     switch (TARO_ENV) {
         case TaroEnv.WEAPP:  // 开发环境 - 微信

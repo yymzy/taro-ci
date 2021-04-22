@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import minimist from "minimist";
 import moment from "moment";
-import { CommandPromiseRes, BuildOptions, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse, ProjectConfig } from "types";
+import { CommandPromiseRes, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse, ProjectConfig, Platform } from "types";
 
 /**
  * 
@@ -69,10 +69,6 @@ export function commandTrigger(commandStr: string, isWatch: boolean, env?: EnvCu
         ...env
       }
     });
-    const { MODE_ENV = "" } = env || {};
-
-    // 打印当前执行的指令
-    console.log(chalk.red("COMMAND:"), commandStr, chalk.red("MODE_ENV:"), MODE_ENV);
 
     // 打印数据输出
     subprocess.stdout.on('data', consoleBufferByTheme);
@@ -113,13 +109,16 @@ export function readConfig(name: string = "taro-ci.config.js"): ConfigOptions {
  * @returns 
  */
 export function getArgs(): ArgsResponse {
-  const { ci = "", dd = "", robot = 1, ...rest } = minimist(process.argv.slice(2), { boolean: ["watch"] });
+  const { ci = "", dd = "", robot = 1, watch, ...rest } = minimist(process.argv.slice(2), { boolean: ["watch"] });
   const [toolId, privateKey] = ci.split(",");
   const [accessToken, secret] = dd.split(",");
   return {
     ci: ci ? { toolId, privateKey } : void (0),
     dd: dd ? { accessToken, secret } : void (0),
+    watch,
     robot,
+    isWatch: Boolean(watch),
+    isCi: Boolean(robot),
     ...rest
   } as ArgsResponse;
 }
@@ -130,8 +129,8 @@ export function getArgs(): ArgsResponse {
  * @param item 
  * @returns 
  */
-export function getTARO_ENV(item: string) {
-  return item.split("-")[0].toUpperCase();
+export function getTARO_ENV(): Platform {
+  return process.env.PLATFORM_ENV as Platform;
 }
 
 /**
@@ -142,9 +141,7 @@ export function getTARO_ENV(item: string) {
  * @returns 
  */
 function createOutPath(item: string, isWatch: boolean): string {
-  const paths = item.split("-");
-  paths.splice(1, 0, isWatch ? "dev" : "build");
-  return paths.join("-")
+  return item + `.${isWatch ? "dev" : "build"}`
 }
 
 /**
@@ -152,8 +149,8 @@ function createOutPath(item: string, isWatch: boolean): string {
  * @param item 
  * @returns 
  */
-export function getProjectConfigPath(item: string) {
-  const TARO_ENV = getTARO_ENV(item);
+export function getProjectConfigPath() {
+  const TARO_ENV = getTARO_ENV()
   return path.resolve("./", `${TARO_ENV === TaroEnv.WEAPP ? "project.config" : "mini.project"}.json`)
 }
 
@@ -163,48 +160,29 @@ export function getProjectConfigPath(item: string) {
  * @param item 
  * @returns 
  */
-export function readProjectConfig(item: string): Promise<ProjectConfig> {
-  return new Promise((resolve, reject) => {
-    const projectConfigPath = getProjectConfigPath(item);
-    fs.readFile(projectConfigPath, (err, data) => {
-      if (err) {
-        reject(err)
-        return
-      }
-      const projectConfig = JSON.parse(data.toString()); //将二进制的数据转换为字符串
-      resolve(projectConfig);
-    });
-  })
+export async function readProjectConfig(): Promise<ProjectConfig> {
+  const projectConfigPath = getProjectConfigPath();
+  const data = fs.readFileSync(projectConfigPath);
+  return JSON.parse(data.toString());
 }
 
 /**
  * 
  * @description 重写小程序配置文件 project.config.json
  */
-export function rewriteProjectConfig(item: string, opts: BuildOptions): Promise<ProjectConfig> {
-  return new Promise((resolve, reject) => {
-    const { appId, isWatch } = opts
-    const outPath = `dist/${createOutPath(item, isWatch)}`;
-    const projectConfigPath = getProjectConfigPath(item);
+export async function rewriteProjectConfig(item: string): Promise<string> {
+  const { info } = readConfig();
+  const { isWatch } = getArgs();
+  const { appId } = info[item] || {};
+  const outPath = `dist/${createOutPath(item, isWatch)}`;
+  const projectConfigPath = getProjectConfigPath();
+  const projectConfig = await readProjectConfig();
+  projectConfig.miniprogramRoot = outPath;
+  projectConfig.appid = appId;
+  fs.writeFileSync(projectConfigPath, JSON.stringify(projectConfig, null, 4));
+  process.env.ROOT_PATH = outPath;
 
-    readProjectConfig(item).then((projectConfig) => {
-      projectConfig.miniprogramRoot = outPath;
-      projectConfig.appid = appId;
-
-      fs.writeFile(
-        projectConfigPath,
-        JSON.stringify(projectConfig, null, 4),
-        (err) => {
-          if (err) {
-            reject(err);
-            return false;
-          }
-          resolve(projectConfig);
-        }
-      );
-    }).catch(reject)
-
-  })
+  return item;
 }
 
 /**
@@ -226,7 +204,7 @@ function formatStrWithLine(...arg: Array<string>): string {
 export function getAndFormatConfigInfo(item: string): ConfigInfoResponse {
   const { robot } = getArgs();
   const { version: rV, description: rD, info } = readConfig();
-  const { version: iV, description: iD, tag = "", label: iLabel = "", robot: iRobot = 1 } = info[item];
+  const { version: iV, description: iD, tag = "", label: iLabel = "", robot: iRobot = 1 } = info[item] || {};
   const { label: pkgLabel, key: pkgKey } = pkgMap[robot + ""];   // [体验版、正式版、临时版]
   const label = formatStrWithLine(pkgLabel, iLabel);
   return {
@@ -239,12 +217,25 @@ export function getAndFormatConfigInfo(item: string): ConfigInfoResponse {
   }
 }
 
+/**
+ * 
+ * @description 格式化指令，首位为平台信息
+ * @param item 
+ * @returns 
+ */
+export function formateCommand(item: string): [Platform, string] {
+  const reg = new RegExp(`(${TaroEnv.WEAPP}|${TaroEnv.ALIPAY})([\.|\-]{1})?(.+)?`)
+  const [, platform, , mode = ""] = item.match(reg) || []
+  return [platform as Platform, mode]
+}
+
 export function isObject(obj) {
   return Object.prototype.toString.call(obj) === '[object Object]'
 }
 export function isArray(arr) {
   return Array.isArray(arr)
 }
+
 /**
  * @description 合并数据
  * @param target 

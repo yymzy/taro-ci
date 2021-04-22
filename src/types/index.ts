@@ -7,15 +7,16 @@ export type CommandPromiseRes = {
 
 // 自定义环境变量
 export type EnvCustom = {
-  MODE_ENV: string,
-  ROOT_PATH: string,
-  [propertys: string]: any;
+  MODE_ENV?: string,
+  PLATFORM_ENV?: string,
+  ROOT_PATH?: string,
 }
 
 // 打包配置项
 export type BuildOptions = {
   appId?: string,
-  isWatch?: boolean
+  isWatch?: boolean,
+  isCi?: boolean
 };
 
 export type Ci = { privateKey: string, toolId: string }
@@ -26,7 +27,8 @@ export interface ArgsResponse extends minimist.ParsedArgs {
   watch: boolean,
   ci?: Ci,
   dd?: Dd,
-  [propertys: string]: any
+  isCi?: boolean,
+  isWatch?: boolean
 }
 
 // info组内选项
@@ -48,12 +50,14 @@ export type ConfigOptions = {
   info: {
     [propertys: string]: InfoOptions
   },
+  useTaroPluginBuild?: boolean,
   git?: string,
   ci?: Ci,
   dd?: Dd,
 }
 
 export type UploadResponse = {
+  item: string,
   result?: {
     qrCodeUrl?: string,
     [propertys: string]: any
@@ -111,6 +115,8 @@ export type ProjectConfig = {
 export type PkgMap = { [propertys: string]: { label: string, key: string } };
 
 export enum TaroEnv {
-  "WEAPP" = "WEAPP",
-  "ALIPAY" = "ALIPAY"
+  "WEAPP" = "weapp",
+  "ALIPAY" = "alipay"
 }
+
+export type Platform = "weapp" | "alipay"
