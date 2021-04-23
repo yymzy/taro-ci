@@ -8,6 +8,7 @@ import { getAndFormatConfigInfo, getArgs, getTARO_ENV, readConfig } from "utils"
  */
 async function notice(uploadResponse: UploadResponse) {
     const { result, error, item } = uploadResponse;
+    console.log("getArgs()", getArgs());
     const { dd: argsDD } = getArgs();
     const { dd = argsDD, name, git = `https://newgitlab.kuaidihelp.com/MINIAPP/${name}/-/jobs/` } = readConfig();
     const { version, description, label } = getAndFormatConfigInfo(item);
