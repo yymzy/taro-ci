@@ -109,10 +109,6 @@ export function readConfig(name: string = "taro-ci.config.js"): ConfigOptions {
  * @returns 
  */
 export function getArgs(): ArgsResponse {
-  console.log("process.argv", process.argv);
-  console.log("process.argv.slice(2)", process.argv.slice(2));
-  const d = minimist(process.argv.slice(2), { boolean: ["watch"] });
-  console.log("d", d);
   const { ci = "", dd = "", robot = 1, watch, ...rest } = minimist(process.argv.slice(2), { boolean: ["watch"] });
   const [toolId, privateKey] = ci.split(",");
   const [accessToken, secret] = dd.split(",");

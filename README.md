@@ -2,7 +2,7 @@
 
 基于[微信：miniprogram-ci](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)、[支付宝：miniu](https://opendocs.alipay.com/mini/miniu/command-intro)开发，用于同时打包 weapp、alipay、weapp.third 多版本发布管理；第一个横线后半部分会作为环境变量注入到 Taro 框架小程序中【process.env.MODE_ENV=third】；执行 taro build 时置入的环境变量还包括 process.env.ROOT_PATH=当前文件包输出路径，例：dist/weapp.dev；process.env.PLATFORM_ENV=weapp|alipay；
 
-扩展编译平台使用 [taro-plugin-build](https://www.npmjs.com/package/taro-plugin-build)，并在 taro-ci.config 中配置 useTaroPluginBuild=true，插件编译时自动注册对应的编译平台，可实现多版本公用框架并针对特殊版本处理，具体可参考：[Taro跨平台开发](https://taro-docs.jd.com/taro/docs/2.x/envs)
+扩展编译平台使用 [taro-plugin-build](https://www.npmjs.com/package/taro-plugin-build)，并在 taro-ci.config 中配置 useTaroPluginBuild=true，插件编译时自动注册对应的编译平台，可实现多版本公用框架并针对特殊版本处理，具体可参考：[Taro 跨平台开发](https://taro-docs.jd.com/taro/docs/2.x/envs)
 
 > 注意： 如需在项目中使用 MODE_ENV|PLATFORM_ENV
 >
@@ -58,6 +58,7 @@ module.exports = {
     },
   },
   useTaroPluginBuild: false, // 是否使用taro-plugin-build插件
+  useTaroPluginBuildBy: "mode", // mode|normal 自定义编译模式：mode-按照MODE_ENV对应编译，否则按照传入的全指令编译
   git: "", // 当前项目对应的git地址
   // 支付宝工具id与私钥
   // ci: {

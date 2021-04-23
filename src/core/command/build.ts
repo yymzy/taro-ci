@@ -3,11 +3,12 @@ import { commandTrigger, getArgs, readConfig } from "utils";
 
 async function build(item: string): Promise<string> {
   const { isWatch } = getArgs();
-  const { useTaroPluginBuild = false } = readConfig()
+  const { useTaroPluginBuild = false, useTaroPluginBuildBy } = readConfig()
   const { MODE_ENV, PLATFORM_ENV } = process.env
   // 生成打印指令
   // useTaroPluginBuild 使用taro-plugin-build插件会自定义编译平台
-  let commandStr = `taro build --type ${useTaroPluginBuild ? item : PLATFORM_ENV}`;
+  // useTaroPluginBuildBy 编译平台模式
+  let commandStr = `taro build --type ${useTaroPluginBuild ? (useTaroPluginBuildBy === "mode" && MODE_ENV) ? MODE_ENV : item : PLATFORM_ENV}`;
 
   if (isWatch) {
     // 开发模式，开启监听
