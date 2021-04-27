@@ -50,8 +50,7 @@ export type ConfigOptions = {
   info: {
     [propertys: string]: InfoOptions
   },
-  useTaroPluginBuild?: boolean,
-  useTaroPluginBuildBy?: "mode" | "normal",
+  useTaroPluginBuildBy?: "normal" | "mode" | "type",
   git?: string,
   ci?: Ci,
   dd?: Dd,
