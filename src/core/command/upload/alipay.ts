@@ -24,7 +24,7 @@ async function alipay(item: string): Promise<UploadResponse> {
         appId,
         clientType: 'alipay',
         experience: true,
-        onProgressUpdate: ({ data = "" }) => console.log(data),
+        onProgressUpdate: () => { },
     }).catch(({ code, msg }) => error = new Error(`${code}：${msg}`));
 
     return {

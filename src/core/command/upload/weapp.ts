@@ -28,7 +28,7 @@ async function weapp(item: string): Promise<UploadResponse> {
         version,
         desc,
         setting,
-        onProgressUpdate: console.log
+        onProgressUpdate: () => { }
     }).catch(err => error = err);
 
     return {
