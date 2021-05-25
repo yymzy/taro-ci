@@ -204,15 +204,16 @@ function formatStrWithLine(...arg: Array<string>): string {
 export function getAndFormatConfigInfo(item: string): ConfigInfoResponse {
   const { robot } = getArgs();
   const { version: rV, description: rD, info } = readConfig();
-  const { version: iV, description: iD, tag = "", label: iLabel = "", robot: iRobot = 1 } = info[item] || {};
+  const { version = rV, description = rD, tag = "", label: iLabel = "", robot: iRobot = 1 } = info[item] || {};
   const { label: pkgLabel, key: pkgKey } = pkgMap[robot + ""];   // [体验版、正式版、临时版]
   const label = formatStrWithLine(pkgLabel, iLabel);
   return {
     robot: robot + (iRobot - 1) * 2 as Robot,
-    version: formatStrWithLine(pkgKey, tag + (iV || rV)),
+    versionPure: version,
+    version: formatStrWithLine(pkgKey, tag + (version)),
     description: `【${label}版-${moment().format(
       "YYYYMMDDHHmmss"
-    )}】：${iD || rD}`,
+    )}】：${description}`,
     label
   }
 }

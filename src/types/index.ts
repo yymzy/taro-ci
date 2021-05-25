@@ -101,7 +101,8 @@ export type ConfigInfoResponse = {
   version: string,
   description: string,
   label: string,
-  robot?: Robot
+  robot?: Robot,
+  versionPure?: string
 }
 
 export type ProjectConfig = {
