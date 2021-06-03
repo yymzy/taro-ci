@@ -1,10 +1,11 @@
 import { spawn } from "child_process";
+import ora from "ora";
 import chalk from "chalk";
 import path from "path";
 import fs from "fs";
 import minimist from "minimist";
 import moment from "moment";
-import { CommandPromiseRes, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse, ProjectConfig, Platform } from "types";
+import { CommandPromiseRes, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse, ProjectConfig, Platform, ProgressType } from "types";
 
 /**
  * 
@@ -19,6 +20,40 @@ function keywordTheme(str: string, keyword: string, color: string, isAll: boolea
   const rule = new RegExp(`^${keyword}`);
   const isMatch = isAll ? str.includes(keyword) : rule.test(str);
   return isMatch ? isAll ? chalk.hex(color)(str) : str.replace(rule, chalk.hex(color)(keyword)) : ""
+}
+
+/**
+ * 
+ * @description 进度描述信息
+ * @param type 
+ * @param status 
+ * @returns 
+ */
+export function CreateProgress(type: ProgressType, item: string) {
+  const typeMap = {
+    build: "构建",
+    upload: "上传"
+  };
+  this.text = `项目[${item}]${typeMap[type]}`;
+  this.start = () => {
+    this.spinner = ora().start(chalk.yellow(`${this.text}中... \n`))
+  }
+  this.fail = (err: Error) => {
+    if (!this.spinner) {
+      this.spinner = ora();
+    }
+    this.spinner.fail(chalk.red(`${this.text}失败：${err} \n`));
+  }
+  this.succeed = () => {
+    if (!this.spinner) {
+      this.spinner = ora()
+    }
+    this.spinner.succeed(chalk.green(`${this.text}成功！ \n`));
+  }
+  this.stop = () => {
+    if (!this.spinner) return;
+    this.spinner.stop();
+  }
 }
 
 /**
@@ -60,7 +95,7 @@ export const pkgMap: PkgMap = {
  * @param commandStr 命令行字符串
  * @returns 
  */
-export function commandTrigger(commandStr: string, isWatch: boolean, env?: EnvCustom): Promise<CommandPromiseRes> {
+export function commandTrigger(commandStr: string, isWatch: boolean, item: string, env?: EnvCustom): Promise<CommandPromiseRes> {
   return new Promise((resolve) => {
     const [command, ...arg] = commandStr.split(/\s/g);
     const subprocess = spawn(command, arg, {
@@ -70,25 +105,35 @@ export function commandTrigger(commandStr: string, isWatch: boolean, env?: EnvCu
       }
     });
 
-    // 打印数据输出
-    subprocess.stdout.on('data', consoleBufferByTheme);
-
-    // 打印错误输出
-    subprocess.stderr.on('data', data => {
-      consoleBufferByTheme(data);
-      if (isWatch) {
-        resolve({ code: 0 });
-      }
-    });
+    const progressIns = new CreateProgress("build", item);
+    if (isWatch) {
+      // 打印数据输出
+      subprocess.stdout.on("data", consoleBufferByTheme);
+      // 打印错误输出
+      subprocess.stderr.on("data", data => {
+        consoleBufferByTheme(data);
+        if (isWatch) {
+          resolve({ code: 0 });
+        }
+      });
+    } else {
+      subprocess.stdout.on("data", () => { });
+      subprocess.stderr.on("data", () => { });
+      progressIns.start();
+    }
 
     subprocess.on("exit", () => {
       if (!isWatch) {
         resolve({ code: 0 });
+        progressIns.succeed();
       }
     });
 
     // 监听报错信息
-    subprocess.on('error', (err) => console.error(err));
+    subprocess.on("error", (err) => {
+      console.error(err);
+      progressIns.fail(err);
+    });
   })
 }
 

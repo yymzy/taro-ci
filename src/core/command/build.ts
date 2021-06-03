@@ -16,9 +16,9 @@ async function build(item: string): Promise<string> {
   }
 
   // 打印当前执行的指令
-  console.log(chalk.red("编译平台:"), PLATFORM_ENV, chalk.red("版本模式:"), MODE_ENV);
+  console.log(chalk.grey("编译平台:"), chalk.red(PLATFORM_ENV), chalk.grey("版本模式:"), chalk.red(MODE_ENV || "默认"));
   // 执行命令
-  await commandTrigger(commandStr, isWatch);
+  await commandTrigger(commandStr, isWatch, item);
   return item;
 }
 

@@ -1,6 +1,7 @@
 import Robot from "dingtalk-robot-sdk";
 import { TaroEnv, UploadResponse } from "types";
 import { getAndFormatConfigInfo, getArgs, getTARO_ENV, readConfig } from "utils";
+import chalk from "chalk";
 
 /**
  * 
@@ -33,6 +34,7 @@ async function notice(uploadResponse: UploadResponse) {
     }
 
     ddIns.send(content);
+    chalk.green(`通知已发!`)
 }
 
 export default notice;

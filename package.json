@@ -1,6 +1,6 @@
 {
   "name": "taro-ci",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "main": "dist/taro-ci.js",
   "types": "dist/types/index.d.ts",
   "bin": {
@@ -48,6 +48,7 @@
     "miniprogram-ci": "^1.0.45",
     "miniu": "^1.11.3",
     "moment": "^2.29.1",
+    "ora": "^5.4.0",
     "semver": "^7.3.5"
   },
   "devDependencies": {

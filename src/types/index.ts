@@ -65,6 +65,8 @@ export type UploadResponse = {
   error: Error
 }
 
+export type ProgressType = "build" | "upload";
+
 export type Robot =
   | 1
   | 2

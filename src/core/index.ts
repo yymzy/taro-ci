@@ -1,6 +1,8 @@
 import build from "./command/build";
 import upload from "./command/upload";
 import notice from "./command/notice";
+import ora from "ora";
+import chalk from "chalk";
 import { rewriteProjectConfig, formateCommand, getArgs, readConfig } from "utils";
 
 async function run(item: string) {
@@ -9,8 +11,8 @@ async function run(item: string) {
     process.env.PLATFORM_ENV = platform;
     process.env.MODE_ENV = mode;
     await notice(await upload(await build(await rewriteProjectConfig(item))));
-  } catch (error) {
-    console.log(error.message);
+  } catch (err) {
+    ora().fail(chalk.gray(err.message));
   }
 }
 
