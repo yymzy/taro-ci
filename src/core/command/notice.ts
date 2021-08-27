@@ -10,7 +10,7 @@ import chalk from "chalk";
 async function notice(uploadResponse: UploadResponse) {
     const { result, error, item } = uploadResponse;
     const { dd: argsDD } = getArgs();
-    const { dd = argsDD, name, git = `https://newgitlab.kuaidihelp.com/MINIAPP/${name}/-/jobs/` } = readConfig();
+    const { dd = argsDD, name, git = `` } = readConfig();
     const { version, description, label } = getAndFormatConfigInfo(item);
     const TARO_ENV = getTARO_ENV();
     const { qrCodeUrl } = result || {};
