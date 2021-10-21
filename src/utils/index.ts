@@ -5,7 +5,7 @@ import path from "path";
 import fs from "fs";
 import minimist from "minimist";
 import moment from "moment";
-import { CommandPromiseRes, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse, ProjectConfig, Platform, ProgressType } from "types";
+import { CommandPromiseRes, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse, ProjectConfig, Platform, ProgressType, TaroConfig } from "types";
 
 /**
  * 
@@ -143,9 +143,27 @@ export function commandTrigger(commandStr: string, isWatch: boolean, item: strin
  * @param name 
  * @returns 
  */
-export function readConfig(name: string = "taro-ci.config.js"): ConfigOptions {
-  const config = require(path.resolve("./", name));
-  return typeof config === 'function' ? config(merge) : config
+export function readConfig(name: string = "taro-ci"): ConfigOptions {
+  const config = require(path.resolve(`./${name}.config.js`));
+  const { PLATFORM_ENV, MODE_ENV = "" } = process.env;
+  let opts = typeof config === 'function' ? config(merge) : config;
+  try {
+    // 使用发布配置项
+    if (PLATFORM_ENV) {
+      const type = PLATFORM_ENV + (MODE_ENV ? `.${MODE_ENV}` : "");
+      const releaseJson = path.resolve(`./${name}.release.${type}.json`);
+      const list = require(releaseJson);
+      if (list && list.length > 0) {
+        const [version, description] = list[0].split("-");
+        opts = {
+          ...opts,
+          version,
+          description
+        }
+      }
+    }
+  } catch (error) { }
+  return opts;
 }
 
 /**
@@ -196,7 +214,7 @@ function createOutPath(item: string, isWatch: boolean): string {
  */
 export function getProjectConfigPath() {
   const TARO_ENV = getTARO_ENV()
-  return path.resolve("./", `${TARO_ENV === TaroEnv.WEAPP ? "project.config" : "mini.project"}.json`)
+  return path.resolve("./", TaroConfig[TARO_ENV.toLocaleUpperCase()])
 }
 
 /**
@@ -270,7 +288,7 @@ export function getAndFormatConfigInfo(item: string): ConfigInfoResponse {
  * @returns 
  */
 export function formateCommand(item: string): [Platform, string] {
-  const reg = new RegExp(`(${TaroEnv.WEAPP}|${TaroEnv.ALIPAY})([\.|\-]{1})?(.+)?`)
+  const reg = new RegExp(`(${TaroEnv.WEAPP}|${TaroEnv.ALIPAY}|${TaroEnv.QUICK}|${TaroEnv.SWAN})([\.|\-]{1})?(.+)?`)
   const [, platform, , mode = ""] = item.match(reg) || []
   return [platform as Platform, mode]
 }

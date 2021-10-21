@@ -119,7 +119,16 @@ export type PkgMap = { [propertys: string]: { label: string, key: string } };
 
 export enum TaroEnv {
   "WEAPP" = "weapp",
-  "ALIPAY" = "alipay"
+  "ALIPAY" = "alipay",
+  "SWAN" = "swan",
+  "QUICK" = "quick"
 }
 
-export type Platform = "weapp" | "alipay"
+export enum TaroConfig {
+  "WEAPP" = "project.config.json",
+  "ALIPAY" = "mini.project.json",
+  "SWAN" = "project.swan.json",
+  "QUICK" = "quickapp.config.json"
+}
+
+export type Platform = "weapp" | "alipay" | "swan" | "quick"

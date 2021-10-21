@@ -72,6 +72,13 @@ module.exports = {
 };
 ```
 
+```json
+/**
+ * 根目录增加发布配置文件 taro-ci.release.${PLATFORM_ENV}.${MODE_ENV}.json
+ */
+["0.0.2-最新版描述信息-20211021", "0.0.1-上个版本描述信息-20211020"]
+```
+
 ---
 
 > 微信小程序生成[上传秘钥](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)文件 **private.wx..................key** 放到项目根目录下
