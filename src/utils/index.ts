@@ -112,7 +112,7 @@ export function commandTrigger(commandStr: string, isWatch: boolean, item: strin
       // 打印错误输出
       subprocess.stderr.on("data", data => {
         consoleBufferByTheme(data);
-        if (isWatch) {
+        if (data.toString().trim().endsWith("编译成功")) {
           resolve({ code: 0 });
         }
       });
