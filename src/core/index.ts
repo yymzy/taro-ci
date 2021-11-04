@@ -19,7 +19,8 @@ async function run(item: string) {
 async function init() {
   // 读取ci配置项
   const config = await readConfig();
-  const { type = config.type } = getArgs();
+  const { type = config.type, isDebug } = getArgs();
+  process.env.DEBUG_ENV = isDebug ? "OPEN" : "CLOSE";
   const list = type ? Array.isArray(type) ? type : [type] : null;
   if (!list) return;
 

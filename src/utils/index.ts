@@ -172,15 +172,17 @@ export function readConfig(name: string = "taro-ci"): ConfigOptions {
  * @returns 
  */
 export function getArgs(): ArgsResponse {
-  const { ci = "", dd = "", robot = 1, watch, ...rest } = minimist(process.argv.slice(2), { boolean: ["watch"] });
+  const { ci = "", dd = "", robot = 1, watch, debug, ...rest } = minimist(process.argv.slice(2), { boolean: ["watch", "debug"] });
   const [toolId, privateKey] = ci.split(",");
   const [accessToken, secret] = dd.split(",");
   return {
     ci: ci ? { toolId, privateKey } : void (0),
     dd: dd ? { accessToken, secret } : void (0),
     watch,
+    debug,
     robot,
     isWatch: Boolean(watch),
+    isDebug: Boolean(debug),
     isCi: Boolean(robot),
     ...rest
   } as ArgsResponse;
