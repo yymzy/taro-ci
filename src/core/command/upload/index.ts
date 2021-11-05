@@ -4,9 +4,12 @@ import weapp from "./weapp";
 import alipay from "./alipay";
 
 async function upload(item: string): Promise<UploadResponse> {
-    const { isCi, isWatch } = getArgs()
+    const { isCi, isWatch, isDebug } = getArgs()
     if (isWatch || !isCi) {
         throw new Error(`${item}，未传入robot或者开发模式无法上传`);
+    }
+    if (isDebug) {
+        throw new Error(`${item}，DEBUG模式无法上传`);
     }
     const TARO_ENV = getTARO_ENV();
 

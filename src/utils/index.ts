@@ -205,8 +205,8 @@ export function getTARO_ENV(): Platform {
  * @param isWatch 
  * @returns 
  */
-function createOutPath(item: string, isWatch: boolean): string {
-  return item + `.${isWatch ? "dev" : "build"}`
+function createOutPath(item: string, isWatch: boolean, isDebug: boolean): string {
+  return item + `.${isWatch ? "dev" : "build"}` + (isDebug ? ".debug" : "");
 }
 
 /**
@@ -237,9 +237,9 @@ export async function readProjectConfig(): Promise<ProjectConfig> {
  */
 export async function rewriteProjectConfig(item: string): Promise<string> {
   const { info } = readConfig();
-  const { isWatch } = getArgs();
+  const { isWatch, isDebug } = getArgs();
   const { appId } = info[item] || {};
-  const outPath = `dist/${createOutPath(item, isWatch)}`;
+  const outPath = `dist/${createOutPath(item, isWatch, isDebug)}`;
   const projectConfigPath = getProjectConfigPath();
   const projectConfig = await readProjectConfig();
   projectConfig.miniprogramRoot = outPath;
