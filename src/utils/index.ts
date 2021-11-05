@@ -145,14 +145,13 @@ export function commandTrigger(commandStr: string, isWatch: boolean, item: strin
  */
 export function readConfig(name: string = "taro-ci"): ConfigOptions {
   const config = require(path.resolve(`./${name}.config.js`));
-  const { PLATFORM_ENV, MODE_ENV = "" } = process.env;
+  const { PLATFORM_ENV } = process.env;
   let opts = typeof config === 'function' ? config(merge) : config;
   try {
     // 使用发布配置项
     if (PLATFORM_ENV) {
-      const type = PLATFORM_ENV + (MODE_ENV ? `.${MODE_ENV}` : "");
-      const releaseJson = path.resolve(`./${name}.release.${type}.json`);
-      const list = require(releaseJson);
+      const releaseJson = resolvePath(path.resolve(`./${name}.release`), ".json");
+      const list = releaseJson ? require(releaseJson) : null;
       if (list && list.length > 0) {
         const [version, description] = list[0].split("-");
         opts = {
@@ -329,4 +328,41 @@ export function merge(target, ...arg) {
       return subAcc
     }, acc)
   }, target)
+}
+
+/**
+ * 
+ * @description 处理路径
+ * @param p 
+ * @param suffix 
+ * @returns 
+ */
+export function resolvePath(p: string, suffix: string): string {
+  const platformEnv = process.env.PLATFORM_ENV;
+  const modeEnv = process.env.MODE_ENV;
+  const types = [platformEnv];
+  let realpath = "";
+  if (modeEnv) {
+    types.unshift(`${platformEnv}.${modeEnv}`, modeEnv);
+  }
+  for (let i = 0, len = types.length; i < len; i++) {
+    const type = types[i];
+    if (fs.existsSync(realpath = `${p}.${type}${suffix}`)) {
+      return realpath;
+    }
+    if (fs.existsSync(realpath = `${p}${path.sep}index.${type}${suffix}`)) {
+      return realpath;
+    }
+    const pathReg = /\/index$/;
+    if (pathReg.test(p) && fs.existsSync(realpath = `${p.replace(pathReg, `.${type}/index`)}${suffix}`)) {
+      return realpath;
+    }
+  }
+  if (fs.existsSync(realpath = `${p}${suffix}`)) {
+    return realpath;
+  }
+  if (fs.existsSync(realpath = `${p}${path.sep}index${suffix}`)) {
+    return realpath;
+  }
+  return ""
 }
