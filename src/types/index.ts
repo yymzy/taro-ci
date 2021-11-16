@@ -109,6 +109,7 @@ export type ConfigInfoResponse = {
 
 export type ProjectConfig = {
   miniprogramRoot: string,
+  smartProgramRoot?: string,
   appid: string,
   setting: {
     [propertys: string]: any

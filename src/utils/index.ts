@@ -241,7 +241,11 @@ export async function rewriteProjectConfig(item: string): Promise<string> {
   const outPath = `dist/${createOutPath(item, isWatch, isDebug)}`;
   const projectConfigPath = getProjectConfigPath();
   const projectConfig = await readProjectConfig();
-  projectConfig.miniprogramRoot = outPath;
+  if (process.env.PLATFORM_ENV === 'swan') {
+    projectConfig.smartProgramRoot = outPath;
+  } else {
+    projectConfig.miniprogramRoot = outPath;
+  }
   projectConfig.appid = appId;
   fs.writeFileSync(projectConfigPath, JSON.stringify(projectConfig, null, 4));
   process.env.ROOT_PATH = outPath;
