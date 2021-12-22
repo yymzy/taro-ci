@@ -122,7 +122,9 @@ export enum TaroEnv {
   "WEAPP" = "weapp",
   "ALIPAY" = "alipay",
   "SWAN" = "swan",
-  "QUICK" = "quick"
+  "QUICK" = "quickapp",
+  "H5" = "h5",
+  "RN" = "rn"
 }
 
 export enum TaroConfig {
@@ -132,4 +134,4 @@ export enum TaroConfig {
   "QUICK" = "quickapp.config.json"
 }
 
-export type Platform = "weapp" | "alipay" | "swan" | "quick"
+export type Platform = "weapp" | "alipay" | "swan" | "quickapp" | "h5" | "rn"

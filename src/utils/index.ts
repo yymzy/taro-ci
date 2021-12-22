@@ -7,6 +7,7 @@ import minimist from "minimist";
 import moment from "moment";
 import { CommandPromiseRes, EnvCustom, TaroEnv, ConfigOptions, PkgMap, ConfigInfoResponse, Robot, ArgsResponse, ProjectConfig, Platform, ProgressType, TaroConfig } from "types";
 
+const TS_REG = /^[0-9]{8}$/;
 /**
  * 
  * @description 输出配色，替换关键词
@@ -68,6 +69,10 @@ function consoleBufferByTheme(data: ArrayBuffer): string {
     || keywordTheme(str, "编译", "#00ee76")
     || keywordTheme(str, "编译成功", "#00ee76", true)
     || keywordTheme(str, "监听文件", "#6c6f7d", true)
+    || keywordTheme(str, "创建", "#00aad1")
+    || keywordTheme(str, "修改", "#e3eb00")
+    || keywordTheme(str, "Listening", "#00aad1", true)
+    || keywordTheme(str, "Compiled", "#00ee76", true)
     || str;
   console.log(str);
   return str;
@@ -150,15 +155,26 @@ export function readConfig(name: string = "taro-ci"): ConfigOptions {
   try {
     // 使用发布配置项
     if (PLATFORM_ENV) {
-      const releaseJson = resolvePath(path.resolve(`./${name}.release`), ".json");
+      const releaseJson = path.resolve(`./${name}.release.json`);
       const list = releaseJson ? require(releaseJson) : null;
       if (list && list.length > 0) {
-        const [version, description] = list[0].split("-");
+        const topList = list[0].split("-");
+        const version = topList.splice(0, 1)[0];
+        let ts = topList.splice(-1, 1)[0];
+        let description = topList.join("-");
+        if (!TS_REG.test(ts)) {
+          if (ts) {
+            topList.push(ts);
+            description = topList.join("-");
+          }
+          ts = moment().format("YYYYMMDD");
+        }
         opts = {
           ...opts,
+          ts,
           version,
-          description
-        }
+          description,
+        };
       }
     }
   } catch (error) { }
@@ -215,7 +231,7 @@ function createOutPath(item: string, isWatch: boolean, isDebug: boolean): string
  */
 export function getProjectConfigPath() {
   const TARO_ENV = getTARO_ENV()
-  return path.resolve("./", TaroConfig[TARO_ENV.toLocaleUpperCase()])
+  return path.resolve("./", TaroConfig[TARO_ENV.toLocaleUpperCase()] || TaroConfig.WEAPP)
 }
 
 /**
@@ -293,7 +309,7 @@ export function getAndFormatConfigInfo(item: string): ConfigInfoResponse {
  * @returns 
  */
 export function formateCommand(item: string): [Platform, string] {
-  const reg = new RegExp(`(${TaroEnv.WEAPP}|${TaroEnv.ALIPAY}|${TaroEnv.QUICK}|${TaroEnv.SWAN})([\.|\-]{1})?(.+)?`)
+  const reg = new RegExp(`(${TaroEnv.WEAPP}|${TaroEnv.ALIPAY}|${TaroEnv.QUICK}|${TaroEnv.SWAN}|${TaroEnv.H5}|${TaroEnv.RN})([\.|\-]{1})?(.+)?`)
   const [, platform, , mode = ""] = item.match(reg) || []
   return [platform as Platform, mode]
 }
