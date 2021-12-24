@@ -44,7 +44,7 @@ async function alipay(item: string): Promise<UploadResponse> {
         uploadConfig.packageVersion = packageVersion;
     }
 
-    const result = await miniu.miniUpload(uploadConfig).catch(({ code, msg }) => error = new Error(`${code}：${msg}`));
+    const result = await miniu.miniUpload(uploadConfig).catch((err) => (error = new Error(`${err.message}`)));
 
     return {
         item,
