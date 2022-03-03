@@ -6,8 +6,9 @@ import semver from "semver";
 
 async function alipay(item: string): Promise<UploadResponse> {
     const { ci: argsCI } = getArgs();
-    const { info = {}, ci = argsCI } = await readConfig();
+    const { info = {}, ci } = await readConfig();
     const { appId } = info[item];
+    const { toolId, privateKey } = { ...ci, ...argsCI };
     let { versionPure: packageVersion } = getAndFormatConfigInfo(item);
     let error = null;
 
@@ -15,12 +16,12 @@ async function alipay(item: string): Promise<UploadResponse> {
         throw new Error("缺少taro-ci.config.info配置项，或缺少info[type].appId，无法上传到支付宝平台");
     }
 
-    if (!ci) {
+    if (!toolId) {
         throw new Error("缺少taro-ci.config.ci配置项，或缺少ci.alipay，无法上传到支付宝平台");
     }
 
     // 初始化配置
-    miniu.setConfig(ci);
+    miniu.setConfig({ toolId, privateKey });
 
     const clientType = "alipay";
     const uploadConfig = {

@@ -57,12 +57,14 @@ module.exports = {
       appId: "支付宝的APPID",
     },
   },
+  minSwanVersion: "", // 最低基础库版本
   useTaroPluginBuildBy: "normal", // type|mode|normal 自定义编译模式：mode - 按照MODE_ENV对应编译，type - 按照传入的全指令编译
   git: "", // 当前项目对应的git地址
-  // 支付宝工具id与私钥
+  // 支付宝工具id与私钥；百度上传token
   // ci: {
   //   toolId: "",
-  //   privateKey: ""
+  //   privateKey: "",
+  //   token: ""
   // },
   // 钉钉通知（可配置到git项目的CI/CD变量配置中）
   // dd: {

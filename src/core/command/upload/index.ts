@@ -2,6 +2,7 @@ import { TaroEnv, UploadResponse } from "types";
 import { CreateProgress, getArgs, getTARO_ENV } from "utils";
 import weapp from "./weapp";
 import alipay from "./alipay";
+import swan from "./swan";
 
 async function upload(item: string): Promise<UploadResponse> {
     const { isCi, isWatch, isDebug } = getArgs()
@@ -24,6 +25,10 @@ async function upload(item: string): Promise<UploadResponse> {
 
             case TaroEnv.ALIPAY:  // 开发环境 - 支付宝
                 result = await alipay(item);
+                break;
+
+            case TaroEnv.SWAN:  // 开发环境 - 百度
+                result = await swan(item);
                 break;
 
             default:

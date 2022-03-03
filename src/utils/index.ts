@@ -152,10 +152,14 @@ export function readConfig(name: string = "taro-ci"): ConfigOptions {
   const config = require(path.resolve(`./${name}.config.js`));
   const { PLATFORM_ENV } = process.env;
   let opts = typeof config === 'function' ? config(merge) : config;
+  // 百度最低基础库版本
+  if (!opts.minSwanVersion) {
+    opts.minSwanVersion = "3.310.35";
+  }
   try {
     // 使用发布配置项
     if (PLATFORM_ENV) {
-      const releaseJson = path.resolve(`./${name}.release.json`);
+      const releaseJson = resolvePath(path.resolve(`./${name}.release`), ".json");
       const list = releaseJson ? require(releaseJson) : null;
       if (list && list.length > 0) {
         const topList = list[0].split("-");
@@ -188,10 +192,10 @@ export function readConfig(name: string = "taro-ci"): ConfigOptions {
  */
 export function getArgs(): ArgsResponse {
   const { ci = "", dd = "", robot = 1, watch, debug, ...rest } = minimist(process.argv.slice(2), { boolean: ["watch", "debug"] });
-  const [toolId, privateKey] = ci.split(",");
+  const [toolId, privateKey, token] = ci.split(",");
   const [accessToken, secret] = dd.split(",");
   return {
-    ci: ci ? { toolId, privateKey } : void (0),
+    ci: ci ? { toolId, privateKey, token } : void (0),
     dd: dd ? { accessToken, secret } : void (0),
     watch,
     debug,
@@ -287,11 +291,12 @@ function formatStrWithLine(...arg: Array<string>): string {
  */
 export function getAndFormatConfigInfo(item: string): ConfigInfoResponse {
   const { robot } = getArgs();
-  const { version: rV, description: rD, info } = readConfig();
+  const { version: rV, description: rD, info, minSwanVersion } = readConfig();
   const { version = rV, description = rD, tag = "", label: iLabel = "", robot: iRobot = 1 } = info[item] || {};
   const { label: pkgLabel, key: pkgKey } = pkgMap[robot + ""];   // [体验版、正式版、临时版]
   const label = formatStrWithLine(pkgLabel, iLabel);
   return {
+    minSwanVersion,
     robot: robot + (iRobot - 1) * 2 as Robot,
     versionPure: version,
     version: formatStrWithLine(pkgKey, tag + (version)),
@@ -385,4 +390,25 @@ export function resolvePath(p: string, suffix: string): string {
     return realpath;
   }
   return ""
+}
+
+/**
+ * 
+ * @description 安装指令
+ * @param name 
+ * @returns 
+ */
+export function installCommand(name) {
+  return new Promise((resolve) => {
+    console.log(chalk.red("缺少指令："), chalk.gray(name));
+    const ls = spawn("npm", ["install", name, "-g"], { shell: true });
+    ls.on("close", code => {
+      if (code === 0) {
+        console.log(chalk.green("指令安装成功"));
+      } else {
+        console.log(chalk.red("指令安装失败"));
+      }
+      resolve(code);
+    });
+  });
 }

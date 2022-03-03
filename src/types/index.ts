@@ -50,6 +50,7 @@ export type ConfigOptions = {
   info: {
     [propertys: string]: InfoOptions
   },
+  minSwanVersion: string,
   useTaroPluginBuildBy?: "normal" | "mode" | "type",
   git?: string,
   ci?: Ci,
@@ -104,7 +105,8 @@ export type ConfigInfoResponse = {
   description: string,
   label: string,
   robot?: Robot,
-  versionPure?: string
+  versionPure?: string,
+  minSwanVersion?: string
 }
 
 export type ProjectConfig = {
