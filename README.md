@@ -1,6 +1,6 @@
 # taro-ci
 
-基于[微信：miniprogram-ci](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)、[支付宝：miniu](https://opendocs.alipay.com/mini/miniu/command-intro)开发，用于同时打包 weapp、alipay、weapp.third 多版本发布管理；第一个横线后半部分会作为环境变量注入到 Taro 框架小程序中【process.env.MODE_ENV=third】；执行 taro build 时置入的环境变量还包括 process.env.ROOT_PATH=当前文件包输出路径，例：dist/weapp.dev；process.env.PLATFORM_ENV=weapp|alipay；
+基于[微信：miniprogram-ci](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)、[支付宝：miniu](https://opendocs.alipay.com/mini/miniu/command-intro)开发，使用swan-toolkit支持百度小程序自动上传，用于同时打包 weapp、alipay、swan、weapp.third 多版本发布管理；第一个横线后半部分会作为环境变量注入到 Taro 框架小程序中【process.env.MODE_ENV=third】；执行 taro build 时置入的环境变量还包括 process.env.ROOT_PATH=当前文件包输出路径，例：dist/weapp.dev；process.env.PLATFORM_ENV=weapp|alipay|swan；
 
 扩展编译平台使用 [taro-plugin-build](https://www.npmjs.com/package/taro-plugin-build)，并在 taro-ci.config 中配置 useTaroPluginBuildBy=""，插件编译时自动注册对应的编译平台，可实现多版本公用框架并针对特殊版本处理，具体可参考：[Taro 跨平台开发](https://taro-docs.jd.com/taro/docs/2.x/envs)
 
@@ -24,9 +24,9 @@
 >   "script": {
 >     "dev": "taro-ci --watch", // 开发模式
 >     "build": "taro-ci", // 打包
->     "ci:beta": "taro-ci --robot 1 --ci=toolId,privateKey --dd=accessToken,secret", // 发布 - 体验版
->     "ci:rc": "taro-ci --robot 2 --ci=toolId,privateKey --dd=accessToken,secret", // 发布 - 候选版
->     "ci:release": "taro-ci --robot 3 --ci=toolId,privateKey --dd=accessToken,secret" // 发布 - 正式版
+>     "ci:beta": "taro-ci --robot 1 --ci=toolId,privateKey,token --dd=accessToken,secret", // 发布 - 体验版
+>     "ci:rc": "taro-ci --robot 2 --ci=toolId,privateKey,token --dd=accessToken,secret", // 发布 - 候选版
+>     "ci:release": "taro-ci --robot 3 --ci=toolId,privateKey,token --dd=accessToken,secret" // 发布 - 正式版
 >   }
 > }
 > ```
